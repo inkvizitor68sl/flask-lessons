@@ -1,19 +1,14 @@
-<html>
- <head>
-  <meta charset="utf-8">
-  <style>
-   p {
-    margin-top: 0.1em; /* Отступ сверху */
-    margin-bottom: 0.1em; /* Отступ снизу */
-   }
-  </style>
- </head>
-<body>
+{% extends 'any.html' %}
 
-{% for line in text %}
-    <p>{{line}}</p>
-{% endfor %}
 
-</body>
-</html>
-
+{% block content %}
+	<div class="container well clearfix">
+		{% if text_line is defined %}
+			<p>{{text_line}}</p>
+		{% else %}
+			{% for line in text %}
+    			<p>{{line}}</p>
+    		{% endfor %}
+    	{% endif %}
+    </div>
+{% endblock %}
