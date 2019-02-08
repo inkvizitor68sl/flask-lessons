@@ -18,8 +18,6 @@ from wtforms.validators import Required
 import paramiko
 
 
-
-
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/flask"
 mongo = PyMongo(app)
@@ -90,14 +88,11 @@ def history_route():
 
 @app.route('/git', methods=['POST'])
 def git_route_post():
-    git_has_to_deploy = request.form.get('gitcommit_choice').split()[0]
+    git_hash_to_deploy = request.form.get('gitcommit_choice').split()[0]
     stage_to_deploy = request.form.get('stage_choice')
-    data_from_deploy = module_deploy_git(stage_to_deploy, git_has_to_deploy)
+    data_from_deploy = module_deploy_git(stage_to_deploy, git_hash_to_deploy)
     text_from_deploy = data_from_deploy.decode().splitlines()
-    print(data_from_deploy)
-    print('asfasf')
-    print (text_from_deploy, type(text_from_deploy))
-    type(text_from_deploy)
+    add_history_event('git deploy to ' + stage_to_deploy + ' with hash' + git_hash_to_deploy)
     return render_template('simple.html', text=text_from_deploy)
 
 @app.route('/git', methods=['GET'])
@@ -107,9 +102,6 @@ def git_route_get():
     git_form = GitDeployForm()
     git_form.gitcommit_choice.choices = [(g, g) for g in commit_list]
     git_form.stage_choice.choices = [(i, i) for i in stages_list.keys()]
-    print(stages_list)
-    print(type(stages_list))
-    #print(list_stages_for_app())
     return render_template('git-form.html', text=commit_list, form = git_form)
 
 def add_history_event(action_done):
